@@ -22,6 +22,9 @@ RUN (cd /lib/systemd/system/sysinit.target.wants/; for i in *; do [ $i == system
     rm -f /lib/systemd/system/basic.target.wants/* && \
     rm -f /lib/systemd/system/anaconda.target.wants/*
 
+# Ensure /etc/ansible directory exists
+RUN mkdir -p /etc/ansible
+
 # Copy the Ansible inventory file to the container
 COPY ../ansible_inventory /etc/ansible/hosts
 
