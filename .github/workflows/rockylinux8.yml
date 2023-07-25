@@ -36,5 +36,3 @@ jobs:
           push: true
           tags: ${{ env.IMAGE_NAME }}:${{ github.sha }}-${{ matrix.platform }}
           platforms: ${{ matrix.platform }}
-          builder: buildx
-
