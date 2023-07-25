@@ -30,7 +30,7 @@ docker build -t docker-<DISTRO>-ansible .
 
 To run a container from the built Docker image, use the following command:
 ```
-docker run -d --privileged -v /sys/fs/cgroup:/sys/fs/cgroup\:ro docker-<DISTRO>-ansible
+docker run -d --privileged -v /sys/fs/cgroup:/sys/fs/cgroup:ro docker-<DISTRO>-ansible
 ```
 
 - The `--privileged` flag is required to run systemd inside the container.
