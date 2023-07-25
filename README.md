@@ -15,8 +15,8 @@ This repository contains a Dockerfile and necessary files to build a Docker imag
 1. Clone this repository to your local machine:
 
 ```
-git clone https://github.com/iamenr0s/docker-<DISTRO>-ansible.git
-cd docker-<DISTRO>-ansible
+git clone https://github.com/iamenr0s/docker-ansible-images.git
+cd <DISTRO>
 ```
 
 2. Ensure you have Docker installed on your system.
