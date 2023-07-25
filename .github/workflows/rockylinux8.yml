@@ -37,5 +37,5 @@ jobs:
         with:
           context: ./rockylinux8/
           push: true
-          tags: ${{ env.IMAGE_NAME }}:${{ github.sha }}-${{ matrix.platform }}
+          tags: ${{ env.IMAGE_NAME }}:${{ github.sha }}
           platforms: ${{ matrix.platform }}
