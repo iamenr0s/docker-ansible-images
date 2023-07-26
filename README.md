@@ -22,14 +22,13 @@ This repository contains a Dockerfile and necessary files to build a Docker imag
 
 ```
 git clone https://github.com/iamenr0s/docker-ansible-images.git
-cd <DISTRO>
 ```
 
 2. Ensure you have Docker installed on your system.
 
 3. Build the Docker image:
 ```
-docker build -t docker-<DISTRO>-ansible .
+docker build -t docker-<DISTRO>-ansible -f <DISTRO>/Dockerfile .
 ```
 
 ## How to Run the Docker Container
