@@ -2,6 +2,14 @@
 
 This repository contains a Dockerfile and necessary files to build a Docker image based on different operative systems that enables systemd service management, mounts the cgroup volume, and installs an Ansible inventory file.
 
+## Available Images
+
+| Name | Docker Image | Architecture |
+|------|--------------|--------------|
+|![GitHub Workflow Status (with event)](https://img.shields.io/github/actions/workflow/status/iamenr0s/docker-ansible-images/.github%2Fworkflows%2Frockylinux8.yml)
+|![Docker Pulls](https://img.shields.io/docker/pulls/iamenr0s/docker-rockylinux8-ansible)
+|amd64,arm64|
+
 ## Features
 
 - **Systemd Services**: The Docker image allows you to manage systemd services inside the container, providing a more comprehensive environment for testing and development.
