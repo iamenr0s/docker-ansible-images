@@ -4,6 +4,8 @@ on:
   push:
     branches:
       - 'main'
+    tags:
+      - '*'
 
 env:
   IMAGE_NAME: enros/docker-rockylinux8-ansible
@@ -41,5 +43,5 @@ jobs:
           push: true
           tags: |
             ${{ env.IMAGE_NAME }}:latest
-            ${{ env.IMAGE_NAME }}:${{ env.TAG }}
+            ${{ env.IMAGE_NAME }}:${{ env.GITHUB_REF_NAME }}
           platforms: ${{ matrix.platform }}
