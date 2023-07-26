@@ -7,6 +7,7 @@ on:
 
 env:
   IMAGE_NAME: enros/docker-rockylinux8-ansible
+  TAG: v1.0.0
 
 jobs:
   docker:
@@ -20,16 +21,6 @@ jobs:
         name: Checkout
         uses: actions/checkout@v3
       - 
-        name: Get tag
-        uses: olegtarasov/get-tag@v2.1.2
-        id: tagName
-        with:
-          tagRegexGroup: 1
-      -
-         name: Set Tag Variable
-         run: |
-           echo ::set-env name=TAG::$GIT_TAG_NAME
-      -
         name: Set up QEMU
         uses: docker/setup-qemu-action@v2
       -
