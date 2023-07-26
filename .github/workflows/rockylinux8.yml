@@ -20,8 +20,11 @@ jobs:
         name: Checkout
         uses: actions/checkout@v3
       - 
-        name: Get tagName
-        uses: little-core-labs/get-git-tag@v3.0.1
+        name: Get tag
+        uses: olegtarasov/get-tag@v2.1.2
+        id: tagName
+        with:
+          tagRegexGroup: 1 
       -
         name: Set up QEMU
         uses: docker/setup-qemu-action@v2
