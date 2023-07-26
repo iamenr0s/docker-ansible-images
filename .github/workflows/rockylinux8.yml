@@ -20,11 +20,8 @@ jobs:
         name: Checkout
         uses: actions/checkout@v3
       - 
-        name: Get Branch
-        run: |
-          raw=$(git branch -r --contains ${{ github.ref }})
-          branch=${raw/origin\/}
-          echo ::set-env name=BRANCH::$branch
+        name: Get tagName
+        uses: little-core-labs/get-git-tag@v3.0.1
       -
         name: Set up QEMU
         uses: docker/setup-qemu-action@v2
@@ -45,5 +42,5 @@ jobs:
           push: true
           tags: |
             ${{ env.IMAGE_NAME }}:latest
-            ${{ env.IMAGE_NAME }}:${{ env.BRANCH }}
+            ${{ env.IMAGE_NAME }}:${{ GIT_TAG_NAME }}
           platforms: ${{ matrix.platform }}
