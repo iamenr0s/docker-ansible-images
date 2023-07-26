@@ -26,7 +26,7 @@ RUN (cd /lib/systemd/system/sysinit.target.wants/; for i in *; do [ $i == system
 RUN mkdir -p /etc/ansible
 
 # Copy the Ansible inventory file to the container
-COPY ansible_inventory /etc/ansible/hosts
+COPY ./ansible_inventory /etc/ansible/hosts
 
 # Disable requiretty.
 RUN sed -i -e 's/^\(Defaults\s*requiretty\)/#--- \1/'  /etc/sudoers
