@@ -6,7 +6,7 @@ ENV PIP_ROOT_USER_ACTION=ignore
 
 # Install required packages for Ansible
 RUN dnf update -y && \
-    dnf install -y python3-pip python3-devel gcc openssl-devel libffi-devel sudo && \
+    dnf install -y python3-pip python3-devel gcc openssl-devel libffi-devel sudo openssh openssh-server && \
     dnf clean all
 
 ENV VIRTUAL_ENV=/opt/venv
@@ -35,7 +35,7 @@ RUN mkdir -p /etc/ansible
 COPY ansible-inventory /etc/ansible/hosts
 
 # Disable requiretty.
-#RUN sed -i -e 's/^\(Defaults\s*requiretty\)/#--- \1/'  /etc/sudoers
+RUN sed -i -e 's/^\(Defaults\s*requiretty\)/#--- \1/'  /etc/sudoers
 
 # Start the default target (similar to runlevel 3 in traditional Linux systems)
 VOLUME ["/sys/fs/cgroup"]
