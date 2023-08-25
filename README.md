@@ -7,6 +7,7 @@ This repository contains a Dockerfile and necessary files to build a Docker imag
 | Name | Docker Image | Architecture |
 |------|--------------|--------------|
 |![GitHub Workflow Status (with event)](https://img.shields.io/github/actions/workflow/status/iamenr0s/docker-ansible-images/rockylinux8.yml?label=rockylinux8)|![Docker Pulls](https://img.shields.io/docker/pulls/iamenr0s/docker-rockylinux8-ansible?label=docker-rockylinux8-ansible)|amd64,arm64|
+|![GitHub Workflow Status (with event)](https://img.shields.io/github/actions/workflow/status/iamenr0s/docker-ansible-images/rockylinux9.yml?label=rockylinux9)|![Docker Pulls](https://img.shields.io/docker/pulls/iamenr0s/docker-rockylinux9-ansible?label=docker-rockylinux9-ansible)|amd64,arm64|
 
 ## Features
 
