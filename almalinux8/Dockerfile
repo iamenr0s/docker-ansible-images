@@ -15,7 +15,7 @@ ENV PATH="$VIRTUAL_ENV/bin:$PATH"
 
 # Install Ansible via pip
 RUN pip3 install --upgrade pip && \
-    pip3 install ansible
+    pip3 install ansible cryptography
 
 # Enable systemd
 ENV container docker
