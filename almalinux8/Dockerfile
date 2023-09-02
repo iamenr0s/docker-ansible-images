@@ -6,7 +6,7 @@ ENV PIP_ROOT_USER_ACTION=ignore
 
 # Install required packages for Ansible
 RUN dnf update -y && \
-    dnf install -y python3-pip python3-devel gcc openssl-devel libffi-devel sudo openssh openssh-server && \
+    dnf install -y python3-pip python3-devel gcc openssl-devel libffi-devel sudo openssh openssh-server openssh-clients && \
     dnf clean all
 
 ENV VIRTUAL_ENV=/opt/venv
