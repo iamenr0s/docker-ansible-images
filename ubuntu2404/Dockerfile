@@ -6,7 +6,7 @@ ARG DEBIAN_FRONTEND=noninteractive
 # Install required packages for Ansible
 RUN apt-get update && apt-get install -y --no-install-recommends \
        sudo systemd systemd-sysv build-essential wget libffi-dev libssl-dev procps \
-       python3-pip python3-dev python3-setuptools python3-wheel python3-apt python3-venv \
+       python3-pip python3-dev python3-setuptools python3-wheel python3-apt python3-venv openssh-client\
     && rm -rf /var/lib/apt/lists/* \
     && rm -Rf /usr/share/doc && rm -Rf /usr/share/man \
     && apt-get clean
@@ -17,7 +17,7 @@ ENV PATH="$VIRTUAL_ENV/bin:$PATH"
 
 # Install Ansible via pip
 RUN pip3 install --upgrade pip \
-    && pip3 install ansible cryptography
+    && pip3 install ansible cryptography>=2.6
 
 # Ensure /etc/ansible directory exists
 RUN mkdir -p /etc/ansible
