@@ -16,8 +16,8 @@ RUN python3 -m venv $VIRTUAL_ENV
 ENV PATH="$VIRTUAL_ENV/bin:$PATH"
 
 # Install Ansible via pip
-RUN pip3 install --upgrade pip \
-    && pip3 install ansible cryptography>=2.6
+RUN pip3 install --upgrade --no-cache-dir pip \
+    && pip3 install --no-cache-dir ansible cryptography>=2.6
 
 # Ensure /etc/ansible directory exists
 RUN mkdir -p /etc/ansible

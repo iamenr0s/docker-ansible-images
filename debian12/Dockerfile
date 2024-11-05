@@ -1,6 +1,6 @@
 # Use the official Debian 12 base image from Docker Hub
 FROM debian:bookworm
-LABEL maintainer="enr0s"
+LABEL maintainer="iamenr0s"
 
 ARG DEBIAN_FRONTEND=noninteractive
 
@@ -17,8 +17,8 @@ RUN python3 -m venv $VIRTUAL_ENV
 ENV PATH="$VIRTUAL_ENV/bin:$PATH"
 
 # Install Ansible via pip
-RUN pip3 install --upgrade pip \
-    && pip3 install ansible cryptography
+RUN pip3 install --no-cache-dir --upgrade pip \
+    && pip3 install --no-cache-dir ansible cryptography
 
 # Ensure /etc/ansible directory exists
 RUN mkdir -p /etc/ansible

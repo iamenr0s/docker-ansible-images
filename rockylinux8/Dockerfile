@@ -1,6 +1,6 @@
 # Use the official Rocky Linux 8 base image from Docker Hub
 FROM rockylinux/rockylinux:8
-LABEL maintainer="enr0s"
+LABEL maintainer="iamenr0s"
 
 ENV PIP_ROOT_USER_ACTION=ignore
 
@@ -14,8 +14,8 @@ RUN python3 -m venv $VIRTUAL_ENV
 ENV PATH="$VIRTUAL_ENV/bin:$PATH"
 
 # Install Ansible via pip
-RUN pip3 install --upgrade pip \
-    && pip3 install ansible cryptography
+RUN pip3 install --upgrade --no-cache-dir pip \
+    && pip3 install --no-cache-dir ansible cryptography
 
 # Enable systemd
 ENV container docker

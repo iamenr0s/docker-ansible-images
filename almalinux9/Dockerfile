@@ -1,6 +1,6 @@
 # Use the official Alma Linux 9 base image from Quay
 FROM quay.io/almalinuxorg/9-base:9
-LABEL maintainer="enr0s"
+LABEL maintainer="iamenr0s"
 
 ENV PIP_ROOT_USER_ACTION=ignore
 
@@ -14,8 +14,8 @@ RUN python3 -m venv $VIRTUAL_ENV
 ENV PATH="$VIRTUAL_ENV/bin:$PATH"
 
 # Install Ansible via pip
-RUN pip3 install --upgrade pip \
-    && pip3 install ansible cryptography
+RUN pip3 install --no-cache-dir --upgrade pip \
+    && pip3 install --no-cache-dir ansible cryptography
 
 # Enable systemd
 ENV container docker
