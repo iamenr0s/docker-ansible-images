@@ -4,6 +4,14 @@ LABEL maintainer="iamenr0s"
 
 ENV PIP_ROOT_USER_ACTION=ignore
 
+
+# Update repository configuration to use a reliable mirror
+RUN dnf install -y 'dnf-command(config-manager)' && \
+    dnf config-manager --add-repo https://download.rockylinux.org/pub/rocky/8/BaseOS/x86_64/os/  && \
+    dnf config-manager --add-repo https://download.rockylinux.org/pub/rocky/8/AppStream/x86_64/os/ && \
+    echo "module_hotfixes=1" >> /etc/yum.repos.d/download.rockylinux.org_pub_rocky_8_BaseOS_x86_64_os_.repo && \
+    echo "module_hotfixes=1" >> /etc/yum.repos.d/download.rockylinux.org_pub_rocky_8_AppStream_x86_64_os_.repo
+
 # Install required packages for Ansible
 RUN dnf update -y && \
     dnf install -y python3-pip python3-devel gcc openssl-devel libffi-devel sudo openssh openssh-server && \
