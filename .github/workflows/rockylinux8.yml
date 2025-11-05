@@ -1,4 +1,4 @@
-name: Build and Push Rockylinux 8 Docker Image
+name: Rockylinux 8 Docker Image
 
 on:
   push:

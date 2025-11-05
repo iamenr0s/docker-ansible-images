@@ -1,4 +1,4 @@
-name: Build and Push Almalinux 10 Docker Image
+name: Almalinux 10 Docker Image
 
 on:
   push:

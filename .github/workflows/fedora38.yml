@@ -1,4 +1,4 @@
-name: Build and Push Fedora 38 Docker Image
+name: Fedora 38 Docker Image
 
 on:
   push:

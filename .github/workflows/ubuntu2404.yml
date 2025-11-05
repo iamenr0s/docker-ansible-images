@@ -1,4 +1,4 @@
-name: Build and Push Ubuntu 24.04 Docker Image
+name: Ubuntu 24.04 Docker Image
 
 on:
   push:

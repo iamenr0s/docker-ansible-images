@@ -1,4 +1,4 @@
-name: Build and Push Debian 11 Docker Image
+name: Debian 11 Docker Image
 
 on:
   push:
