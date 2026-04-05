@@ -6,6 +6,8 @@ on:
       - main
     paths:
       - 'fedora37/**'
+    tags:
+      - 'v*.*.*'
   schedule:
     - cron: '0 0 1 * *'
   workflow_dispatch:
@@ -29,11 +31,18 @@ jobs:
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v3
 
-      - name: Set short SHA tag
+      - name: Set tags
         id: tags
         run: |
           SHORT_SHA=$(echo "${{ github.sha }}" | cut -c1-7)
           echo "short_sha=${SHORT_SHA}" >> "$GITHUB_OUTPUT"
+          if [[ "${{ github.ref }}" == refs/tags/* ]]; then
+            VERSION=${{GITHUB_REF#refs/tags/v}}
+            echo "version=${VERSION}" >> "$GITHUB_OUTPUT"
+            echo "is_tag=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "is_tag=false" >> "$GITHUB_OUTPUT"
+          fi
 
       - name: Login to Quay.io
         uses: docker/login-action@v3
@@ -58,13 +67,23 @@ jobs:
       - name: Push to Quay.io
         env:
           SHORT_SHA: ${{ steps.tags.outputs.short_sha }}
+          VERSION: ${{ steps.tags.outputs.version }}
+          IS_TAG: ${{ steps.tags.outputs.is_tag }}
         run: |
           podman manifest push --all fedora37 quay.io/${{ env.IMAGE_NAME }}:latest
           podman manifest push --all fedora37 "quay.io/${{ env.IMAGE_NAME }}:${SHORT_SHA}"
+          if [ "${IS_TAG}" = "true" ]; then
+            podman manifest push --all fedora37 "quay.io/${{ env.IMAGE_NAME }}:${VERSION}"
+          fi
 
       - name: Push to Docker Hub
         env:
           SHORT_SHA: ${{ steps.tags.outputs.short_sha }}
+          VERSION: ${{ steps.tags.outputs.version }}
+          IS_TAG: ${{ steps.tags.outputs.is_tag }}
         run: |
           podman manifest push --all fedora37 docker.io/${{ env.IMAGE_NAME }}:latest
           podman manifest push --all fedora37 "docker.io/${{ env.IMAGE_NAME }}:${SHORT_SHA}"
+          if [ "${IS_TAG}" = "true" ]; then
+            podman manifest push --all fedora37 "docker.io/${{ env.IMAGE_NAME }}:${VERSION}"
+          fi
