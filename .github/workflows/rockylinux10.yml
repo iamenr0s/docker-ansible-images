@@ -37,7 +37,7 @@ jobs:
           SHORT_SHA=$(echo "${{ github.sha }}" | cut -c1-7)
           echo "short_sha=${SHORT_SHA}" >> "$GITHUB_OUTPUT"
           if [[ "${{ github.ref }}" == refs/tags/* ]]; then
-            VERSION=${{GITHUB_REF#refs/tags/v}}
+            VERSION=${GITHUB_REF#refs/tags/v}
             echo "version=${VERSION}" >> "$GITHUB_OUTPUT"
             echo "is_tag=true" >> "$GITHUB_OUTPUT"
           else
