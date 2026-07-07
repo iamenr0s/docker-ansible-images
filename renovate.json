@@ -1,0 +1,18 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": ["config:best-practices"],
+  "packageRules": [
+    {
+      "description": "Each directory is a fixed distro version (debian12/ stays bookworm) - never bump base image tags",
+      "matchDatasources": ["docker"],
+      "matchUpdateTypes": ["major", "minor"],
+      "enabled": false
+    },
+    {
+      "description": "Automerge digest bumps so every image tracks the latest base rebuild",
+      "matchDatasources": ["docker"],
+      "matchUpdateTypes": ["digest", "pin", "patch"],
+      "automerge": true
+    }
+  ]
+}

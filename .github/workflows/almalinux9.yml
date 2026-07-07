@@ -1,3 +1,5 @@
+---
+
 name: Build and Push docker-almalinux9-ansible
 
 on:

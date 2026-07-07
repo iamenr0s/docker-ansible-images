@@ -1,3 +1,5 @@
+---
+
 name: Build and Push docker-fedora38-ansible
 
 on:

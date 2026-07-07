@@ -1,3 +1,5 @@
+---
+
 name: Build and Push docker-ubuntu2404-ansible
 
 on:
