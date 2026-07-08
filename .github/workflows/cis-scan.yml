@@ -72,6 +72,10 @@ jobs:
           format: sarif
           output: trivy.sarif
           severity: HIGH,CRITICAL
+          # Only report CVEs the distro has actually fixed - a rebuild
+          # resolves them. Unfixed/EOL CVEs are visible in the compliance
+          # report step below but would drown code scanning (5000+ alerts).
+          ignore-unfixed: true
           exit-code: '0'
 
       - name: Trivy CIS Docker Benchmark report
