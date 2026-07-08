@@ -1,4 +1,4 @@
-# Use the official Fedoara 40 base image from Quay
+# Use the official Fedoara 41 base image from Quay
 FROM quay.io/fedora/fedora:41
 LABEL maintainer="iamenr0s"
 
