@@ -25,6 +25,7 @@ jobs:
     timeout-minutes: 60
     permissions:
       contents: read
+      id-token: write
 
     steps:
       - name: Checkout
@@ -72,7 +73,7 @@ jobs:
           VERSION: ${{ steps.tags.outputs.version }}
           IS_TAG: ${{ steps.tags.outputs.is_tag }}
         run: |
-          podman manifest push --all fedora37 quay.io/${{ env.IMAGE_NAME }}:latest
+          podman manifest push --all fedora37 --digestfile "$RUNNER_TEMP/quay-digest" quay.io/${{ env.IMAGE_NAME }}:latest
           podman manifest push --all fedora37 "quay.io/${{ env.IMAGE_NAME }}:${SHORT_SHA}"
           if [ "${IS_TAG}" = "true" ]; then
             podman manifest push --all fedora37 "quay.io/${{ env.IMAGE_NAME }}:${VERSION}"
@@ -84,8 +85,16 @@ jobs:
           VERSION: ${{ steps.tags.outputs.version }}
           IS_TAG: ${{ steps.tags.outputs.is_tag }}
         run: |
-          podman manifest push --all fedora37 docker.io/${{ env.IMAGE_NAME }}:latest
+          podman manifest push --all fedora37 --digestfile "$RUNNER_TEMP/dockerhub-digest" docker.io/${{ env.IMAGE_NAME }}:latest
           podman manifest push --all fedora37 "docker.io/${{ env.IMAGE_NAME }}:${SHORT_SHA}"
           if [ "${IS_TAG}" = "true" ]; then
             podman manifest push --all fedora37 "docker.io/${{ env.IMAGE_NAME }}:${VERSION}"
           fi
+
+      - name: Install cosign
+        uses: sigstore/cosign-installer@v3
+
+      - name: Sign images (cosign keyless)
+        run: |
+          cosign sign --yes "quay.io/${{ env.IMAGE_NAME }}@$(cat "$RUNNER_TEMP/quay-digest")"
+          cosign sign --yes "docker.io/${{ env.IMAGE_NAME }}@$(cat "$RUNNER_TEMP/dockerhub-digest")"

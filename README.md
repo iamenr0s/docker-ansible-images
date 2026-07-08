@@ -59,6 +59,19 @@ docker run -d --privileged -v /sys/fs/cgroup:/sys/fs/cgroup:ro docker-<DISTRO>-a
 - The `--privileged` flag is required to run systemd inside the container.
 - The `-v` option mounts the host's cgroup volume to the container's cgroup directory.
 
+## Verifying Image Signatures
+
+All images are signed at build time with [cosign](https://docs.sigstore.dev/) keyless signing, using the GitHub Actions OIDC identity of this repository. To verify an image has not been altered:
+
+```
+cosign verify \
+  --certificate-identity-regexp 'https://github.com/iamenr0s/docker-ansible-images/' \
+  --certificate-oidc-issuer https://token.actions.githubusercontent.com \
+  docker.io/iamenr0s/docker-<DISTRO>-ansible:latest
+```
+
+The same command works against `quay.io/iamenr0s/docker-<DISTRO>-ansible:latest`.
+
 ## Important Notes
 
 - Running systemd inside a Docker container is not a typical use case and may have security implications. It is generally recommended to use Docker for stateless services and consider alternative solutions like Kubernetes for managing stateful services with systemd requirements.
