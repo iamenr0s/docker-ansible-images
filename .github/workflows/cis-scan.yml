@@ -1,0 +1,117 @@
+---
+
+name: CIS compliance scan
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - '*/Dockerfile'
+      - '.github/workflows/cis-scan.yml'
+  schedule:
+    - cron: '30 3 * * 1'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  security-events: write
+
+jobs:
+  scan:
+    name: Scan ${{ matrix.distro }}
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    strategy:
+      fail-fast: false
+      matrix:
+        distro:
+          - almalinux8
+          - almalinux9
+          - almalinux10
+          - debian10
+          - debian11
+          - debian12
+          - debian13
+          - fedora37
+          - fedora38
+          - fedora39
+          - fedora40
+          - fedora41
+          - fedora42
+          - fedora43
+          - fedora44
+          - rockylinux8
+          - rockylinux9
+          - rockylinux10
+          - ubuntu2204
+          - ubuntu2404
+          - ubuntu2604
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Lint Dockerfile (hadolint)
+        uses: hadolint/hadolint-action@v3.1.0
+        continue-on-error: true
+        with:
+          dockerfile: ${{ matrix.distro }}/Dockerfile
+          format: sarif
+          output-file: hadolint.sarif
+          no-fail: true
+
+      - name: Build image
+        run: docker build -t scan/${{ matrix.distro }}:latest -f ${{ matrix.distro }}/Dockerfile .
+
+      - name: Trivy vulnerability scan
+        uses: aquasecurity/trivy-action@0.28.0
+        continue-on-error: true
+        with:
+          image-ref: scan/${{ matrix.distro }}:latest
+          format: sarif
+          output: trivy.sarif
+          severity: HIGH,CRITICAL
+          exit-code: '0'
+
+      - name: Trivy CIS Docker Benchmark report
+        uses: aquasecurity/trivy-action@0.28.0
+        continue-on-error: true
+        with:
+          image-ref: scan/${{ matrix.distro }}:latest
+          scan-type: image
+          exit-code: '0'
+        env:
+          TRIVY_COMPLIANCE: docker-cis-1.6.0
+
+      - name: Dockle image lint
+        continue-on-error: true
+        run: |
+          VERSION=$(curl -s https://api.github.com/repos/goodwithtech/dockle/releases/latest \
+            | jq -r '.tag_name' | tr -d v)
+          curl -sSfL -o dockle.deb \
+            "https://github.com/goodwithtech/dockle/releases/download/v${VERSION}/dockle_${VERSION}_Linux-64bit.deb"
+          sudo dpkg -i dockle.deb
+          # Accepted deviations are documented in COMPLIANCE.md
+          dockle --exit-code 0 -f sarif -o dockle.sarif "scan/${{ matrix.distro }}:latest"
+
+      - name: Upload hadolint SARIF
+        uses: github/codeql-action/upload-sarif@v3
+        if: always() && hashFiles('hadolint.sarif') != ''
+        with:
+          sarif_file: hadolint.sarif
+          category: hadolint-${{ matrix.distro }}
+
+      - name: Upload Trivy SARIF
+        uses: github/codeql-action/upload-sarif@v3
+        if: always() && hashFiles('trivy.sarif') != ''
+        with:
+          sarif_file: trivy.sarif
+          category: trivy-${{ matrix.distro }}
+
+      - name: Upload Dockle SARIF
+        uses: github/codeql-action/upload-sarif@v3
+        if: always() && hashFiles('dockle.sarif') != ''
+        with:
+          sarif_file: dockle.sarif
+          category: dockle-${{ matrix.distro }}

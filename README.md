@@ -1,5 +1,11 @@
 # Docker Ansible Images
 
+[![CIS scan](https://img.shields.io/github/actions/workflow/status/iamenr0s/docker-ansible-images/cis-scan.yml?label=CIS%20scan&logo=github)](https://github.com/iamenr0s/docker-ansible-images/actions/workflows/cis-scan.yml)
+[![Signed with cosign](https://img.shields.io/badge/images-signed%20with%20cosign-2f80ed?logo=sigstore)](#verifying-image-signatures)
+[![CIS compliance](https://img.shields.io/badge/CIS-compliance%20notes-blue)](COMPLIANCE.md)
+[![Renovate](https://img.shields.io/badge/renovate-enabled-brightgreen?logo=renovate)](renovate.json)
+[![License](https://img.shields.io/github/license/iamenr0s/docker-ansible-images)](LICENSE)
+
 This repository contains a Dockerfile and necessary files to build a Docker image based on different operative systems that enables systemd service management, mounts the cgroup volume, and installs an Ansible inventory file.
 
 ## Available Images
@@ -26,7 +32,7 @@ This repository contains a Dockerfile and necessary files to build a Docker imag
 | [![rockylinux10](https://img.shields.io/github/actions/workflow/status/iamenr0s/docker-ansible-images/rockylinux10.yml?label=rockylinux10&logo=github)](https://github.com/iamenr0s/docker-ansible-images/actions/workflows/rockylinux10.yml) | [![Quay Pulls](https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fquay.io%2Fapi%2Fv1%2Frepository%2Fiamenr0s%2Fdocker-rockylinux10-ansible&query=%24.pull_count&label=quay%20pulls&logo=redhat&color=red)](https://quay.io/repository/iamenr0s/docker-rockylinux10-ansible) | [![Docker Pulls](https://img.shields.io/docker/pulls/iamenr0s/docker-rockylinux10-ansible?logo=docker)](https://hub.docker.com/r/iamenr0s/docker-rockylinux10-ansible) |
 | [![ubuntu2204](https://img.shields.io/github/actions/workflow/status/iamenr0s/docker-ansible-images/ubuntu2204.yml?label=ubuntu2204&logo=github)](https://github.com/iamenr0s/docker-ansible-images/actions/workflows/ubuntu2204.yml) | [![Quay Pulls](https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fquay.io%2Fapi%2Fv1%2Frepository%2Fiamenr0s%2Fdocker-ubuntu2204-ansible&query=%24.pull_count&label=quay%20pulls&logo=redhat&color=red)](https://quay.io/repository/iamenr0s/docker-ubuntu2204-ansible) | [![Docker Pulls](https://img.shields.io/docker/pulls/iamenr0s/docker-ubuntu2204-ansible?logo=docker)](https://hub.docker.com/r/iamenr0s/docker-ubuntu2204-ansible) |
 | [![ubuntu2404](https://img.shields.io/github/actions/workflow/status/iamenr0s/docker-ansible-images/ubuntu2404.yml?label=ubuntu2404&logo=github)](https://github.com/iamenr0s/docker-ansible-images/actions/workflows/ubuntu2404.yml) | [![Quay Pulls](https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fquay.io%2Fapi%2Fv1%2Frepository%2Fiamenr0s%2Fdocker-ubuntu2404-ansible&query=%24.pull_count&label=quay%20pulls&logo=redhat&color=red)](https://quay.io/repository/iamenr0s/docker-ubuntu2404-ansible) | [![Docker Pulls](https://img.shields.io/docker/pulls/iamenr0s/docker-ubuntu2404-ansible?logo=docker)](https://hub.docker.com/r/iamenr0s/docker-ubuntu2404-ansible) |
-| [![ubuntu2604](https://img.shields.io/github/actions/workflow/status/iamenr0s/docker-ansible-images/ubuntu2604.yml?label=ubuntu2604&logo=github)](https://github.com/iamenr0s/docker-ansible-images/actions/workflows/ubuntu2604.yml) | [![Quay Pulls](https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fquay.io%2Fapi%2Fv1%2Frepository%2Fiamenr0s%2Fdocker-ubuntu2404-ansible&query=%24.pull_count&label=quay%20pulls&logo=redhat&color=red)](https://quay.io/repository/iamenr0s/docker-ubuntu2604-ansible) | [![Docker Pulls](https://img.shields.io/docker/pulls/iamenr0s/docker-ubuntu2604-ansible?logo=docker)](https://hub.docker.com/r/iamenr0s/docker-ubuntu2604-ansible) |
+| [![ubuntu2604](https://img.shields.io/github/actions/workflow/status/iamenr0s/docker-ansible-images/ubuntu2604.yml?label=ubuntu2604&logo=github)](https://github.com/iamenr0s/docker-ansible-images/actions/workflows/ubuntu2604.yml) | [![Quay Pulls](https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fquay.io%2Fapi%2Fv1%2Frepository%2Fiamenr0s%2Fdocker-ubuntu2604-ansible&query=%24.pull_count&label=quay%20pulls&logo=redhat&color=red)](https://quay.io/repository/iamenr0s/docker-ubuntu2604-ansible) | [![Docker Pulls](https://img.shields.io/docker/pulls/iamenr0s/docker-ubuntu2604-ansible?logo=docker)](https://hub.docker.com/r/iamenr0s/docker-ubuntu2604-ansible) |
 
 ## Features
 
@@ -35,6 +41,15 @@ This repository contains a Dockerfile and necessary files to build a Docker imag
 - **Cgroup Volume**: The image mounts the cgroup volume from the host to the container, ensuring proper functioning of systemd and related services.
 
 - **Ansible Inventory**: An Ansible inventory file is installed within the container at `/etc/ansible/hosts`. This allows you to use Ansible for configuration management tasks.
+
+## Security & Automation
+
+- **Multi-arch builds**: every image is built for `linux/amd64` and `linux/arm64`.
+- **Tag-only publishing**: commits to `main` only build the images as a validation check; images are pushed to Docker Hub and Quay (and signed) exclusively when a `v*.*.*` tag is pushed. Each release publishes `latest`, the short commit SHA, and the version as tags.
+- **Signed images**: every published digest is signed with [cosign](https://docs.sigstore.dev/) keyless signing using this repository's GitHub Actions OIDC identity — see [Verifying Image Signatures](#verifying-image-signatures).
+- **CIS compliance scanning**: a [weekly + on-change workflow](.github/workflows/cis-scan.yml) runs Trivy (vulnerabilities + CIS Docker Benchmark), Dockle, and Hadolint against every image, with findings uploaded to GitHub code scanning. Deliberate deviations required by the systemd test-target use case are documented in [COMPLIANCE.md](COMPLIANCE.md).
+- **Automated base image updates**: [Renovate](renovate.json) pins every base image to a digest and raises (auto-merged) PRs when upstream bases are rebuilt, keeping each distro image fresh without ever bumping the distro version itself.
+- **Vulnerability reporting**: see [SECURITY.md](SECURITY.md) — GitHub private vulnerability reporting, no public issues for security bugs.
 
 ## How to Build the Docker Image
 
