@@ -1,0 +1,106 @@
+---
+
+name: Build and Push docker-fedora43-ansible
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'fedora43/**'
+    tags:
+      - 'v*.*.*'
+  schedule:
+    - cron: '0 0 1 * *'
+  workflow_dispatch:
+
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+  IMAGE_NAME: iamenr0s/docker-fedora43-ansible
+
+jobs:
+  build:
+    name: Build multi-arch image
+    runs-on: ubuntu-24.04
+    timeout-minutes: 60
+    permissions:
+      contents: read
+      id-token: write
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
+
+      - name: Set tags
+        id: tags
+        run: |
+          SHORT_SHA=$(echo "${{ github.sha }}" | cut -c1-7)
+          echo "short_sha=${SHORT_SHA}" >> "$GITHUB_OUTPUT"
+          if [[ "${{ github.ref }}" == refs/tags/* ]]; then
+            VERSION=${GITHUB_REF#refs/tags/v}
+            echo "version=${VERSION}" >> "$GITHUB_OUTPUT"
+            echo "is_tag=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "is_tag=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Login to Quay.io
+        if: steps.tags.outputs.is_tag == 'true'
+        uses: docker/login-action@v3
+        with:
+          registry: quay.io
+          username: ${{ secrets.QUAY_USERNAME }}
+          password: ${{ secrets.QUAY_ROBOT_TOKEN }}
+
+      - name: Login to Docker Hub
+        if: steps.tags.outputs.is_tag == 'true'
+        uses: docker/login-action@v3
+        with:
+          registry: docker.io
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_TOKEN }}
+
+      - name: Build amd64
+        run: podman build --platform linux/amd64 --manifest fedora43 -f fedora43/Dockerfile .
+
+      - name: Build arm64
+        run: podman build --platform linux/arm64 --manifest fedora43 -f fedora43/Dockerfile .
+
+      - name: Push to Quay.io
+        if: steps.tags.outputs.is_tag == 'true'
+        env:
+          SHORT_SHA: ${{ steps.tags.outputs.short_sha }}
+          VERSION: ${{ steps.tags.outputs.version }}
+          IS_TAG: ${{ steps.tags.outputs.is_tag }}
+        run: |
+          podman manifest push --all fedora43 --digestfile "$RUNNER_TEMP/quay-digest" quay.io/${{ env.IMAGE_NAME }}:latest
+          podman manifest push --all fedora43 "quay.io/${{ env.IMAGE_NAME }}:${SHORT_SHA}"
+          if [ "${IS_TAG}" = "true" ]; then
+            podman manifest push --all fedora43 "quay.io/${{ env.IMAGE_NAME }}:${VERSION}"
+          fi
+
+      - name: Push to Docker Hub
+        if: steps.tags.outputs.is_tag == 'true'
+        env:
+          SHORT_SHA: ${{ steps.tags.outputs.short_sha }}
+          VERSION: ${{ steps.tags.outputs.version }}
+          IS_TAG: ${{ steps.tags.outputs.is_tag }}
+        run: |
+          podman manifest push --all fedora43 --digestfile "$RUNNER_TEMP/dockerhub-digest" docker.io/${{ env.IMAGE_NAME }}:latest
+          podman manifest push --all fedora43 "docker.io/${{ env.IMAGE_NAME }}:${SHORT_SHA}"
+          if [ "${IS_TAG}" = "true" ]; then
+            podman manifest push --all fedora43 "docker.io/${{ env.IMAGE_NAME }}:${VERSION}"
+          fi
+
+      - name: Install cosign
+        if: steps.tags.outputs.is_tag == 'true'
+        uses: sigstore/cosign-installer@v3
+
+      - name: Sign images (cosign keyless)
+        if: steps.tags.outputs.is_tag == 'true'
+        run: |
+          cosign sign --yes "quay.io/${{ env.IMAGE_NAME }}@$(cat "$RUNNER_TEMP/quay-digest")"
+          cosign sign --yes "docker.io/${{ env.IMAGE_NAME }}@$(cat "$RUNNER_TEMP/dockerhub-digest")"
