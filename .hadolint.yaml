@@ -1,0 +1,8 @@
+---
+# Version pinning is deliberately NOT used in these images: every rebuild
+# must pull the newest distro packages so published CVE fixes land
+# automatically (see COMPLIANCE.md).
+ignored:
+  - DL3008  # pin apt package versions
+  - DL3013  # pin pip package versions
+  - DL3041  # pin dnf package versions

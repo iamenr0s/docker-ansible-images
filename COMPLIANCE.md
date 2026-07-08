@@ -34,6 +34,9 @@ images usable as Ansible/Molecule test targets that emulate real hosts:
 | `sudo` installed, `requiretty` disabled | CIS distro benchmarks (sudo hardening) | Ansible `become` over non-tty connections must work |
 | Python build toolchain and pip present in final image | Image-minimalism guidance | Ansible and its dependencies are the product; roles under test may compile wheels |
 | No `HEALTHCHECK` | CIS Docker 4.6, Dockle CIS-DI-0006 | Containers are short-lived test targets managed by Molecule, not services |
+| OS/pip packages deliberately unpinned | Hadolint DL3008/DL3013/DL3041 (ignored via `.hadolint.yaml`) | Every rebuild must pull the newest packages so published CVE fixes land automatically |
+| Trivy secret scanner disabled in the vuln scan | `scanners: vuln` in cis-scan.yml | The Ansible pip package ships dummy SSH keys and example AWS/JWT credentials as test fixtures, producing 100+ false-positive "leaked secret" alerts |
+| CVEs without a published distro fix not reported | `ignore-unfixed: true` in cis-scan.yml | Nothing to act on until the distro publishes a fix; full unfiltered list stays visible in the compliance report job log |
 
 Any deviation not listed here that a scan reports is a genuine finding and
 should be fixed or added to this table with justification via pull request.

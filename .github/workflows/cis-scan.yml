@@ -62,15 +62,18 @@ jobs:
           no-fail: true
 
       - name: Build image
-        run: docker build -t scan/${{ matrix.distro }}:latest -f ${{ matrix.distro }}/Dockerfile .
+        run: docker build -t scan/${{ matrix.distro }}:ci -f ${{ matrix.distro }}/Dockerfile .
 
       - name: Trivy vulnerability scan
         uses: aquasecurity/trivy-action@v0.36.0
         continue-on-error: true
         with:
-          image-ref: scan/${{ matrix.distro }}:latest
+          image-ref: scan/${{ matrix.distro }}:ci
           format: sarif
           output: trivy.sarif
+          # vuln only: the secret scanner false-positives on the dummy
+          # test keys/credentials Ansible ships inside /opt/venv
+          scanners: vuln
           severity: HIGH,CRITICAL
           # Only report CVEs the distro has actually fixed - a rebuild
           # resolves them. Unfixed/EOL CVEs are visible in the compliance
@@ -82,7 +85,7 @@ jobs:
         uses: aquasecurity/trivy-action@v0.36.0
         continue-on-error: true
         with:
-          image-ref: scan/${{ matrix.distro }}:latest
+          image-ref: scan/${{ matrix.distro }}:ci
           scan-type: image
           exit-code: '0'
         env:
@@ -96,8 +99,11 @@ jobs:
           curl -sSfL -o dockle.deb \
             "https://github.com/goodwithtech/dockle/releases/download/v${VERSION}/dockle_${VERSION}_Linux-64bit.deb"
           sudo dpkg -i dockle.deb
-          # Accepted deviations are documented in COMPLIANCE.md
-          dockle --exit-code 0 -f sarif -o dockle.sarif "scan/${{ matrix.distro }}:latest"
+          # Ignored rules are accepted deviations documented in COMPLIANCE.md:
+          # root user + setuid sudo are required for systemd/Ansible test targets
+          dockle --exit-code 0 -f sarif -o dockle.sarif \
+            --ignore CIS-DI-0001 --ignore CIS-DI-0008 \
+            "scan/${{ matrix.distro }}:ci"
 
       - name: Upload hadolint SARIF
         uses: github/codeql-action/upload-sarif@v4
