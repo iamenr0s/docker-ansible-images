@@ -95,11 +95,16 @@ The same command works against `quay.io/iamenr0s/docker-<DISTRO>-ansible:latest`
 
 - For more information about using this Docker image, refer to the [Docker documentation](https://docs.docker.com/).
 
-## Issues and Contributions
+## Contributing
 
-If you encounter any issues with this Docker image or have suggestions for improvements, please open an issue on the repository.
+Contributions are welcome — see [CONTRIBUTING.md](CONTRIBUTING.md) for the
+local pipeline commands and pull request checklist. This project follows the
+[Contributor Covenant Code of Conduct](CODE_OF_CONDUCT.md).
 
-Contributions in the form of pull requests are also welcome. Feel free to contribute to making these Docker images better!
+## Security
+
+See [SECURITY.md](SECURITY.md) — GitHub private vulnerability reporting, no
+public issues for security bugs.
 
 ## License
 
