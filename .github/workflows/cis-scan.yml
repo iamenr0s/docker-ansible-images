@@ -53,7 +53,7 @@ jobs:
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
 
       - name: Lint Dockerfile (hadolint)
-        uses: hadolint/hadolint-action@v3.3.0
+        uses: hadolint/hadolint-action@2332a7b74a6de0dda2e2221d575162eba76ba5e5 # v3.3.0
         continue-on-error: true
         with:
           dockerfile: ${{ matrix.distro }}/Dockerfile
@@ -65,7 +65,7 @@ jobs:
         run: docker build -t scan/${{ matrix.distro }}:ci -f ${{ matrix.distro }}/Dockerfile .
 
       - name: Trivy vulnerability scan
-        uses: aquasecurity/trivy-action@v0.36.0
+        uses: aquasecurity/trivy-action@ed142fd0673e97e23eac54620cfb913e5ce36c25 # v0.36.0
         continue-on-error: true
         with:
           image-ref: scan/${{ matrix.distro }}:ci
@@ -82,7 +82,7 @@ jobs:
           exit-code: '0'
 
       - name: Trivy CIS Docker Benchmark report
-        uses: aquasecurity/trivy-action@v0.36.0
+        uses: aquasecurity/trivy-action@ed142fd0673e97e23eac54620cfb913e5ce36c25 # v0.36.0
         continue-on-error: true
         with:
           image-ref: scan/${{ matrix.distro }}:ci
@@ -106,21 +106,21 @@ jobs:
             "scan/${{ matrix.distro }}:ci"
 
       - name: Upload hadolint SARIF
-        uses: github/codeql-action/upload-sarif@v4
+        uses: github/codeql-action/upload-sarif@e4fba868fa4b1b91e1fdab776edc8cfbe6e9fb81 # v4
         if: always() && hashFiles('hadolint.sarif') != ''
         with:
           sarif_file: hadolint.sarif
           category: hadolint-${{ matrix.distro }}
 
       - name: Upload Trivy SARIF
-        uses: github/codeql-action/upload-sarif@v4
+        uses: github/codeql-action/upload-sarif@e4fba868fa4b1b91e1fdab776edc8cfbe6e9fb81 # v4
         if: always() && hashFiles('trivy.sarif') != ''
         with:
           sarif_file: trivy.sarif
           category: trivy-${{ matrix.distro }}
 
       - name: Upload Dockle SARIF
-        uses: github/codeql-action/upload-sarif@v4
+        uses: github/codeql-action/upload-sarif@e4fba868fa4b1b91e1fdab776edc8cfbe6e9fb81 # v4
         if: always() && hashFiles('dockle.sarif') != ''
         with:
           sarif_file: dockle.sarif

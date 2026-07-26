@@ -1,5 +1,5 @@
 # Use the official Debian 12 base image from Docker Hub
-FROM debian:bookworm
+FROM debian:bookworm@sha256:9344f8b8992482f80cba753f323adeaf17690076c095ccff6cc9536be98185dc
 LABEL maintainer="iamenr0s"
 
 ARG DEBIAN_FRONTEND=noninteractive
