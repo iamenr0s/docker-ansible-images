@@ -1,5 +1,5 @@
 # Use the official Rocky Linux 9 base image from Docker Hub
-FROM rockylinux/rockylinux:10
+FROM rockylinux/rockylinux:10@sha256:827d37bc128288ccf160ee318bb3cb92d591164cb217e92f8bc61e3982ae1834
 LABEL maintainer="iamenr0s"
 
 ENV PIP_ROOT_USER_ACTION=ignore

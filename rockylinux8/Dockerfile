@@ -1,5 +1,5 @@
 # Use the official Rocky Linux 8 base image from Docker Hub
-FROM rockylinux/rockylinux:8
+FROM rockylinux/rockylinux:8@sha256:e8a49c5403b687db05d4d67333fa45808fbe74f36e683cec7abb1f7d0f2338c6
 LABEL maintainer="iamenr0s"
 
 ENV PIP_ROOT_USER_ACTION=ignore

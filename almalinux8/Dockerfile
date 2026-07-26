@@ -1,5 +1,5 @@
 # Use the official Alma Linux 8 base image from Quay
-FROM quay.io/almalinuxorg/8-base:8
+FROM quay.io/almalinuxorg/8-base:8@sha256:6735e3fbec29c36b1236fe16ff9079ddd9924a387c48f0a2055d594af1aa10bb
 LABEL maintainer="iamenr0s"
 
 ENV PIP_ROOT_USER_ACTION=ignore
