@@ -62,7 +62,16 @@ jobs:
           no-fail: true
 
       - name: Build image
-        run: docker build -t scan/${{ matrix.distro }}:ci -f ${{ matrix.distro }}/Dockerfile .
+        # ponytail: quay.io's Fedora tags are rolling and occasionally 404
+        # on a digest resolved moments earlier (race, not a bad Dockerfile).
+        # Retry the pull/build before giving up.
+        run: |
+          for i in 1 2 3; do
+            docker build -t scan/${{ matrix.distro }}:ci -f ${{ matrix.distro }}/Dockerfile . && exit 0
+            echo "Build failed (attempt $i/3), retrying in 10s..."
+            sleep 10
+          done
+          exit 1
 
       - name: Trivy vulnerability scan
         uses: aquasecurity/trivy-action@ed142fd0673e97e23eac54620cfb913e5ce36c25 # v0.36.0
