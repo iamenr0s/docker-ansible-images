@@ -1,5 +1,5 @@
 # Use the official Debian 11 base image from Docker Hub
-FROM debian:bullseye@sha256:99cdf7792e25416bd801861ccd8e2fb27fb527b25e8d9a8704ebc3ead2015675
+FROM debian:bullseye@sha256:6f519a81440354a85eb592c5f32109ab80605f6b892455983a6f618bf87fabe9
 LABEL maintainer="iamenr0s"
 
 ARG DEBIAN_FRONTEND=noninteractive
