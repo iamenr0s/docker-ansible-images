@@ -4,13 +4,25 @@ LABEL maintainer="iamenr0s"
 
 ARG DEBIAN_FRONTEND=noninteractive
 
-# Update sources.list to use archive.debian.org since Debian 11 is EOL
-RUN echo "deb http://archive.debian.org/debian/ bullseye main contrib non-free" > /etc/apt/sources.list && \
-    echo "deb http://archive.debian.org/debian-security/ bullseye-security main contrib non-free" >> /etc/apt/sources.list && \
-    echo "Acquire::Check-Valid-Until \"false\";" > /etc/apt/apt.conf.d/10no-check-valid-until
+# Pin apt at a snapshot.debian.org timestamp from just before Debian 11
+# went EOL. deb.debian.org is mid-migration right now (Debian 11 EOL'd
+# 2026-08-31): its Packages index already lists newer security-suite
+# builds whose pool files 404, because they're being moved out from
+# under the live mirror. snapshot.debian.org keeps every index and pool
+# file it ever served, so a single timestamp is guaranteed internally
+# consistent and won't rot further.
+# plain http: apt on this base image can't verify snapshot.debian.org's
+# TLS certificate before ca-certificates itself has been updated (a
+# chicken-and-egg problem), and snapshot.debian.org serves the same
+# content over http.
+RUN echo "deb [check-valid-until=no] http://snapshot.debian.org/archive/debian/20260830T000000Z bullseye main contrib non-free" > /etc/apt/sources.list && \
+    echo "deb [check-valid-until=no] http://snapshot.debian.org/archive/debian-security/20260830T000000Z bullseye-security main contrib non-free" >> /etc/apt/sources.list
 
-# Install required packages for Ansible
-RUN apt-get -o Acquire::AllowInsecureRepositories=true update && apt-get install -y --no-install-recommends --allow-unauthenticated \
+# Install required packages for Ansible. dist-upgrade --allow-downgrades:
+# the base image already has newer libs baked in (e.g. libc6) than this
+# snapshot carries, so installing -dev packages (which pin exact versions
+# of their runtime libs) needs those newer libs downgraded to match.
+RUN apt-get update && apt-get dist-upgrade -y --allow-downgrades && apt-get install -y --no-install-recommends --allow-downgrades \
        sudo systemd systemd-sysv build-essential wget libffi-dev libssl-dev procps \
        python3-pip python3-dev python3-setuptools python3-wheel python3-apt python3-venv \
     && rm -rf /var/lib/apt/lists/* \
