@@ -4,9 +4,11 @@ LABEL maintainer="iamenr0s"
 
 ARG DEBIAN_FRONTEND=noninteractive
 
-# Update sources.list to use archive.debian.org since Debian 11 is EOL
+# Update sources.list to use archive.debian.org since Debian 11 is EOL.
+# bullseye-security was never mirrored to archive.debian.org (its fixes
+# are already folded into the point-release bullseye archive), so only
+# the main suite is needed here.
 RUN echo "deb http://archive.debian.org/debian/ bullseye main contrib non-free" > /etc/apt/sources.list && \
-    echo "deb http://archive.debian.org/debian-security/ bullseye-security main contrib non-free" >> /etc/apt/sources.list && \
     echo "Acquire::Check-Valid-Until \"false\";" > /etc/apt/apt.conf.d/10no-check-valid-until
 
 # Install required packages for Ansible
