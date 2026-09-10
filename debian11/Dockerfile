@@ -4,8 +4,13 @@ LABEL maintainer="iamenr0s"
 
 ARG DEBIAN_FRONTEND=noninteractive
 
+# Update sources.list to use archive.debian.org since Debian 11 is EOL
+RUN echo "deb http://archive.debian.org/debian/ bullseye main contrib non-free" > /etc/apt/sources.list && \
+    echo "deb http://archive.debian.org/debian-security/ bullseye-security main contrib non-free" >> /etc/apt/sources.list && \
+    echo "Acquire::Check-Valid-Until \"false\";" > /etc/apt/apt.conf.d/10no-check-valid-until
+
 # Install required packages for Ansible
-RUN apt-get update && apt-get upgrade -y && apt-get install -y --no-install-recommends \
+RUN apt-get -o Acquire::AllowInsecureRepositories=true update && apt-get install -y --no-install-recommends --allow-unauthenticated \
        sudo systemd systemd-sysv build-essential wget libffi-dev libssl-dev procps \
        python3-pip python3-dev python3-setuptools python3-wheel python3-apt python3-venv \
     && rm -rf /var/lib/apt/lists/* \
