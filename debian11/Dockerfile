@@ -12,12 +12,11 @@ RUN echo "deb http://archive.debian.org/debian/ bullseye main contrib non-free" 
     echo "Acquire::Check-Valid-Until \"false\";" > /etc/apt/apt.conf.d/10no-check-valid-until
 
 # Install required packages for Ansible. dist-upgrade first: the base
-# image predates the final bullseye point release archived here, and
-# installing -dev packages otherwise fails on exact-version pins (e.g.
-# libc6-dev against the now-unavailable older libc6 build baked into the
-# image). Plain `upgrade` won't touch these since resolving them requires
-# reshuffling dependencies, which only dist-upgrade will do.
-RUN apt-get -o Acquire::AllowInsecureRepositories=true update && apt-get dist-upgrade -y --allow-unauthenticated && apt-get install -y --no-install-recommends --allow-unauthenticated \
+# image already has newer point-release libs baked in (e.g. libc6) than
+# archive.debian.org's frozen bullseye snapshot carries, so installing
+# -dev packages (which pin exact versions of their runtime libs) fails
+# unless those newer libs are downgraded to match the archive.
+RUN apt-get -o Acquire::AllowInsecureRepositories=true update && apt-get dist-upgrade -y --allow-unauthenticated --allow-downgrades && apt-get install -y --no-install-recommends --allow-unauthenticated \
        sudo systemd systemd-sysv build-essential wget libffi-dev libssl-dev procps \
        python3-pip python3-dev python3-setuptools python3-wheel python3-apt python3-venv \
     && rm -rf /var/lib/apt/lists/* \
