@@ -11,8 +11,12 @@ ARG DEBIAN_FRONTEND=noninteractive
 # under the live mirror. snapshot.debian.org keeps every index and pool
 # file it ever served, so a single timestamp is guaranteed internally
 # consistent and won't rot further.
-RUN echo "deb [check-valid-until=no] https://snapshot.debian.org/archive/debian/20260830T000000Z bullseye main contrib non-free" > /etc/apt/sources.list && \
-    echo "deb [check-valid-until=no] https://snapshot.debian.org/archive/debian-security/20260830T000000Z bullseye-security main contrib non-free" >> /etc/apt/sources.list
+# plain http: apt on this base image can't verify snapshot.debian.org's
+# TLS certificate before ca-certificates itself has been updated (a
+# chicken-and-egg problem), and snapshot.debian.org serves the same
+# content over http.
+RUN echo "deb [check-valid-until=no] http://snapshot.debian.org/archive/debian/20260830T000000Z bullseye main contrib non-free" > /etc/apt/sources.list && \
+    echo "deb [check-valid-until=no] http://snapshot.debian.org/archive/debian-security/20260830T000000Z bullseye-security main contrib non-free" >> /etc/apt/sources.list
 
 # Install required packages for Ansible. dist-upgrade --allow-downgrades:
 # the base image already has newer libs baked in (e.g. libc6) than this
