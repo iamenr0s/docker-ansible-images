@@ -1,5 +1,5 @@
 # Use the official Fedoara 43 base image from Quay
-FROM quay.io/fedora/fedora:43@sha256:d1ca4af34c51c6806cbdef08f64ee08c2c95ac6974d3f25824256001edda223a
+FROM quay.io/fedora/fedora:43@sha256:b6c18ff54f46cb2bc485551d130da32a8dfdd1d215b9b16415ef43d320a97a0c
 LABEL maintainer="iamenr0s"
 
 ENV PIP_ROOT_USER_ACTION=ignore
