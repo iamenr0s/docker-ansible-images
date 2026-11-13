@@ -1,5 +1,5 @@
 # Use the official Fedoara 44 base image from Quay
-FROM quay.io/fedora/fedora:44@sha256:f08613fffc95f5c85c019b2f4ac9e9fb9bb84b9cfd59275671b84169567b157e
+FROM quay.io/fedora/fedora:44@sha256:102f5031dc46ed1975bd2cd98bdf19c59617f3f0026310022f3cb680abe056d3
 LABEL maintainer="iamenr0s"
 
 ENV PIP_ROOT_USER_ACTION=ignore
