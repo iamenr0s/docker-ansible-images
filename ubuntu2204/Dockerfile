@@ -1,5 +1,5 @@
 # Use the official Debian 12 base image from Docker Hub
-FROM ubuntu:22.04@sha256:9abcaffc92a5279fff3a6a41635c0800ea33e528425fb389658806476e7defde
+FROM ubuntu:22.04@sha256:f64b2ffc2f10ab8f8505aa56b2664bd846cbb9df87c7e2532e30f7667021c0e6
 LABEL maintainer="iamenr0s"
 
 ARG DEBIAN_FRONTEND=noninteractive
